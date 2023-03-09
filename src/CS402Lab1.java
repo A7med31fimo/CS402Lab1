@@ -20,7 +20,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 /**
  *
- * @author Hanood
+ * @author Fimo1
  */
 public class CS402Lab1 extends javax.swing.JFrame {
 
@@ -371,9 +371,6 @@ public class CS402Lab1 extends javax.swing.JFrame {
             for (int j = 0; j < size; j++) {
                 p += (char) (47 + (int) (Math.random() * 80));
             }
-
-
-
            long start1 = System.currentTimeMillis();
             String c =encrypt(p, "3");
             long end1 = System.currentTimeMillis();
