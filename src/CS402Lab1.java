@@ -59,7 +59,6 @@ public class CS402Lab1 extends javax.swing.JFrame {
     }
 
     public static String decrypt(String c, String key) {
-
         String p="";
         int num = Integer.parseInt(key);
         for (int i = 0; i < c.length(); i++) {
