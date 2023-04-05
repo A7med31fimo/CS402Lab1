@@ -1,6 +1,6 @@
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.*;
 
 public class ahmed {
     public static String encrypt_by_mono(String p, String key) {
@@ -78,15 +78,15 @@ public class ahmed {
                 }
             }
 
-//            System.out.println(matrix[i]+" ");
+//           System.out.println(matrix[i]+" ");
         }
         String new_p = "";
         x = 0;
-        for (int i = 0; i < p.length(); i+=2) {
+        for (int i = 0; i < p.length(); i += 2) {
             if (Character.isAlphabetic(p.charAt(i))) {
                 if (i < p.length() - 1 && p.charAt(i) != p.charAt(i + 1)) {
                     new_p += p.charAt(i);
-                    new_p += p.charAt(i+1);
+                    new_p += p.charAt(i + 1);
                 } else {
                     new_p += p.charAt(i);
                     new_p += 'x';
@@ -96,7 +96,7 @@ public class ahmed {
             } else {
                 if (x % 2 == 0) {
                     new_p += p.charAt(i);
-                    new_p += p.charAt(i+1);
+                    new_p += p.charAt(i + 1);
                     x = 0;
                 } else {
                     new_p += 'x';
@@ -110,7 +110,7 @@ public class ahmed {
         char c1, c2;
         int col1 = 0, row1 = 0, col2 = 0, row2 = 0;
         String ans = "";
-        for (int i = 0; i < new_p.length(); i+=2) {
+        for (int i = 0; i < new_p.length(); i += 2) {
             if (Character.isAlphabetic(new_p.charAt(i))) {
                 c1 = new_p.charAt(i);
                 c2 = new_p.charAt(i + 1);
@@ -144,6 +144,7 @@ public class ahmed {
 
         return ans;
     }
+
     public static String decrypt_by_playfair_matrix(String c, String key) {
         Map<Character, Boolean> m = new HashMap<Character, Boolean>();
         key = key.toLowerCase();
@@ -195,11 +196,11 @@ public class ahmed {
         }
         String new_c = "";
         x = 0;
-        for (int i = 0; i < c.length(); i+=2) {
+        for (int i = 0; i < c.length(); i += 2) {
             if (Character.isAlphabetic(c.charAt(i))) {
                 if (i < c.length() - 1 && c.charAt(i) != c.charAt(i + 1)) {
                     new_c += c.charAt(i);
-                    new_c += c.charAt(i+1);
+                    new_c += c.charAt(i + 1);
                 } else {
                     new_c += c.charAt(i);
                     new_c += 'x';
@@ -209,7 +210,7 @@ public class ahmed {
             } else {
                 if (x % 2 == 0) {
                     new_c += c.charAt(i);
-                    new_c += c.charAt(i+1);
+                    new_c += c.charAt(i + 1);
                     x = 0;
                 } else {
                     new_c += 'x';
@@ -223,7 +224,7 @@ public class ahmed {
         char c1, c2;
         int col1 = 0, row1 = 0, col2 = 0, row2 = 0;
         String ans = "";
-        for (int i = 0; i < new_c.length(); i+=2) {
+        for (int i = 0; i < new_c.length(); i += 2) {
             if (Character.isAlphabetic(new_c.charAt(i))) {
                 c1 = new_c.charAt(i);
                 c2 = new_c.charAt(i + 1);
@@ -243,26 +244,254 @@ public class ahmed {
                     ans += matrix[row1].charAt(col2);
                     ans += matrix[row2].charAt(col1);
                 } else if (row1 == row2) {
-                    ans += matrix[row1].charAt(((col1 - 1)+5) % 5);
-                    ans += matrix[row2].charAt(((col2 - 1)+5) % 5);
+                    ans += matrix[row1].charAt(((col1 - 1) + 5) % 5);
+                    ans += matrix[row2].charAt(((col2 - 1) + 5) % 5);
                 } else {
-                    ans += matrix[((row1 - 1)+5) % 5].charAt(col1);
-                    ans += matrix[((row2 - 1)+5) % 5].charAt(col2);
+                    ans += matrix[((row1 - 1) + 5) % 5].charAt(col1);
+                    ans += matrix[((row2 - 1) + 5) % 5].charAt(col2);
                 }
 
             } else {
                 ans += new_c.charAt(i);
             }
         }
-        for (int i = 1; i < ans.length()-1; i++) {
-            if(ans.charAt(i)=='x'&&ans.charAt(i-1)==ans.charAt(i+1))
-               ans=ans.substring(0,i)+ans.substring(i+1);
+        for (int i = 1; i < ans.length() - 1; i++) {
+            if (ans.charAt(i) == 'x' && ans.charAt(i - 1) == ans.charAt(i + 1))
+                ans = ans.substring(0, i) + ans.substring(i + 1);
+            if (ans.charAt(i + 1) == 'x' && i + 1 == ans.length() - 1)
+                ans = ans.substring(0, i + 1) + ans.substring(i + 2);
+
         }
         return ans;
     }
+
+    public static String encrypt_by_hila(String p, String key) {
+        key = key.toLowerCase();
+        int[][] matrix = new int[2][2];
+        int x = 0;
+        for (int i = 0; i < 2; i++) {
+            matrix[i][0] = key.charAt(x) - 'a';
+            x++;
+            matrix[i][1] = key.charAt(x) - 'a';
+            x++;
+        }
+        String ans = "";
+        int[][] mat2 = new int[2][1];
+        for (int i = 0; i < p.length(); i += 2) {
+            mat2[0][0] = p.charAt(i) - 'a';
+            mat2[1][0] = p.charAt(i + 1) - 'a';
+            ans += multi(matrix, mat2, 2, 2, 2, 1);
+        }
+        if (p.length() % 2 != 0) {
+            mat2[0][0] = p.charAt(p.length() - 1) - 'a';
+            mat2[1][0] = 'x' - 'a';
+            ans += multi(matrix, mat2, 2, 2, 2, 1);
+        }
+        return ans;
+    }
+
+    public static String decrypt_by_hila(String c, String key) {
+        key = key.toLowerCase();
+        int[][] matrix = new int[2][2];
+
+        matrix[0][0] = key.charAt(0) - 'a';
+        matrix[0][1] = (key.charAt(1) - 'a') * -1;
+        matrix[1][0] = (key.charAt(2) - 'a') * -1;
+        matrix[1][1] = (key.charAt(3) - 'a');
+        int tmp = matrix[0][0];
+        matrix[0][0] = matrix[1][1];
+        matrix[1][1] = tmp;
+        int determint = (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
+        determint = make_num_pos(determint);
+        if (determint == 0) {
+            return "ERROR . . . . . .!";
+        }
+        int inverse = Inverse_of_num(determint);
+        if (inverse == -1) {
+            return "ERROR . . . . . .!";
+        }
+
+        for (int i = 0; i < 2; i++) {
+            matrix[i][0] = make_num_pos(matrix[i][0] * inverse) % 26;
+            matrix[i][1] = make_num_pos(matrix[i][1] * inverse) % 26;
+        }
+        String ans = "";
+        int[][] mat2 = new int[2][1];
+        for (int i = 0; i < c.length(); i += 2) {
+            mat2[0][0] = c.charAt(i) - 'a';
+            mat2[1][0] = c.charAt(i + 1) - 'a';
+            ans += multi(matrix, mat2, 2, 2, 2, 1);
+        }
+        if (ans.charAt(ans.length() - 1) == 'x') {
+            ans = ans.substring(0, ans.length() - 1);
+        }
+        return ans;
+    }
+
+    public static String multi(int mat1[][], int mat2[][], int r1, int c1, int r2, int c2) {
+        if (c1 != r2) {
+            System.out.println("# of columns in Mat1 must = # of row in mat 2");
+            return "";
+        }
+        int[][] rslt = new int[r1][c2];
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c2; j++) {
+                rslt[i][j] = 0;
+                for (int k = 0; k < r2; k++) {
+                    rslt[i][j] += (mat1[i][k] * mat2[k][j]) % 26;
+                    rslt[i][j] %= 26;
+                }
+            }
+        }
+        String ans = "";
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c2; j++) {
+                ans += (char) (rslt[i][j] + 'a');
+            }
+        }
+        return ans;
+    }
+
+    private static int Inverse_of_num(int val) {
+
+        for (int i = 1; i < 26; i++) {
+            if (((val * i) % 26) == 1)
+                return i;
+        }
+        return -1;
+    }
+
+    private static int make_num_pos(int val) {
+        while (val < 0) {
+            val += 26;
+        }
+        return val;
+    }
+
+    public static String hexToBinary(String hex) {
+        String binary = "";
+        hex = hex.toUpperCase();
+
+        HashMap<Character, String> hashMap = new HashMap<Character, String>();
+        hashMap.put('0', "0000");
+        hashMap.put('1', "0001");
+        hashMap.put('2', "0010");
+        hashMap.put('3', "0011");
+        hashMap.put('4', "0100");
+        hashMap.put('5', "0101");
+        hashMap.put('6', "0110");
+        hashMap.put('7', "0111");
+        hashMap.put('8', "1000");
+        hashMap.put('9', "1001");
+        hashMap.put('A', "1010");
+        hashMap.put('B', "1011");
+        hashMap.put('C', "1100");
+        hashMap.put('D', "1101");
+        hashMap.put('E', "1110");
+        hashMap.put('F', "1111");
+        char ch;
+        for (int i = 0; i < hex.length(); i++) {
+            ch = hex.charAt(i);
+            if (hashMap.containsKey(ch))
+                binary += hashMap.get(ch);
+            else {
+                binary = "Invalid Hexadecimal String";
+                return binary;
+            }
+        }
+        return binary;
+    }
+
+
+    public static String[] DES_Genertor_Key(String key) {
+        key = hexToBinary(key);
+        int[] pc1 = {57, 49, 41, 33, 25, 17, 9,
+                1, 58, 50, 42, 34, 26, 18,
+                10, 2, 59, 51, 43, 35, 27,
+                19, 11, 3, 60, 52, 44, 36,
+                63, 55, 47, 39, 31, 23, 15,
+                7, 62, 54, 46, 38, 30, 22,
+                14, 6, 61, 53, 45, 37, 29,
+                21, 13, 5, 28, 20, 12, 4};
+        String C = "", D = "";
+        for (int i = 0; i < 56; i++) {
+            if (i < 28)
+                C += key.charAt(pc1[i] - 1);
+            else
+                D += key.charAt(pc1[i] - 1);
+        }
+        HashMap<Integer, Boolean> arr = new HashMap<>(16);
+        arr.put(1, true);
+        arr.put(2, true);
+        arr.put(9, true);
+        arr.put(16, true);
+        String [] keys=new String[16];
+        for (int i = 1; i <= 16; i++) {
+            if (arr.containsKey(i)) {
+                C = C.substring(1) + C.charAt(0);
+                D = D.substring(1) + D.charAt(0);
+            } else {
+                C = C.substring(2) + C.charAt(0) + C.charAt(1);
+                D = D.substring(2) + D.charAt(0) + D.charAt(1);
+            }
+            keys[i-1] = C + D;
+        }
+
+        int[] pc2 = {14, 17, 11, 24, 1, 5,
+                3, 28, 15, 6, 21, 10,
+                23, 19, 12, 4, 26, 8,
+                16, 7, 27, 20, 13, 2,
+                41, 52, 31, 37, 47, 55,
+                30, 40, 51, 45, 33, 48,
+                44, 49, 39, 56, 34, 53,
+                46, 42, 50, 36, 29, 32};
+        C="";
+
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 48; j++) {
+                C += keys[i].charAt(pc2[j] - 1);
+            }
+            keys[i] = C;
+            C = "";
+        }
+        return keys;
+    }
+
     public static void main(String[] args) {
-        String key = "monarchy", p = "balloon";
-        String c= encrypt_by_playfair_matrix(p, key);
-        System.out.println(decrypt_by_playfair_matrix(c, key));
+        String s[]=DES_Genertor_Key("133457799BBCDFF1");
+        for (int i = 0; i < 16; i++) {
+            System.out.println("Key "+(i+1)+" ="+s[i]);
+        }
+        if("100101111100010111010001111110101011101001000001".equals(s[12])){
+            System.out.println(true);
+        }
+        if("110010110011110110001011000011100001011111110101".equals(s[15])){
+            System.out.println(true);
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

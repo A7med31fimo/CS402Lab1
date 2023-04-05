@@ -3,7 +3,9 @@ import java.awt.Color;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -43,45 +45,110 @@ public class CS402Lab1 extends javax.swing.JFrame {
         return result;
     }
 
-    public static String encrypt(String p, String key) {
-        String c = "";
-        int num=Integer.parseInt(key);
-        for (int i = 0; i < p.length(); i++){
-            if(Character.isUpperCase(p.charAt(i)))
-                c+=(char)((((p.charAt(i)-'A')+num)%26)+65)+"";
-            else if(Character.isLowerCase(p.charAt(i)))
-                c+=(char)((((p.charAt(i)-'a')+num)%26)+97)+"";
-            else
-                c+=p.charAt(i)+"";
-
+    public static String multi(int mat1[][], int mat2[][], int r1, int c1, int r2, int c2) {
+        if (c1 != r2) {
+            System.out.println("# of columns in Mat1 must = # of row in mat 2");
+            return "";
         }
-        return c.toUpperCase();
+        int[][] rslt = new int[r1][c2];
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c2; j++) {
+                rslt[i][j] = 0;
+                for (int k = 0; k < r2; k++) {
+                    rslt[i][j] += (mat1[i][k] * mat2[k][j]) % 26;
+                    rslt[i][j]%=26;
+                }
+            }
+        }
+        String ans = "";
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c2; j++) {
+                ans += (char) (rslt[i][j] + 'a');
+            }
+        }
+        return ans;
+    }
+    //mono
+    //playfaire
+    //hila
+    public static String encrypt(String p, String key) {
+        key = key.toLowerCase();
+        int[][] matrix = new int[2][2];
+        int x = 0;
+        for (int i = 0; i < 2; i++) {
+            matrix[i][0] = key.charAt(x) - 'a';
+            x++;
+            matrix[i][1] = key.charAt(x) - 'a';
+            x++;
+        }
+        String ans = "";
+        int[][] mat2 = new int[2][1];
+        for (int i = 0; i < p.length(); i += 2) {
+            mat2[0][0] = p.charAt(i) - 'a';
+            mat2[1][0] = p.charAt(i + 1) - 'a';
+            ans += multi(matrix, mat2, 2, 2, 2, 1);
+        }
+        if (p.length() % 2 != 0) {
+            mat2[0][0] = p.charAt(p.length() - 1) - 'a';
+            mat2[1][0] = 'x' - 'a';
+            ans += multi(matrix, mat2, 2, 2, 2, 1);
+        }
+        return ans;
     }
 
     public static String decrypt(String c, String key) {
-        String p="";
-        int num = Integer.parseInt(key);
-        for (int i = 0; i < c.length(); i++) {
-            if(Character.isUpperCase(c.charAt(i))) {
-                int idx=((c.charAt(i)-'A')-num)%26;
-                if(idx<0)
-                    p += (char) (idx+26+65) + "";
-                else
-                    p += (char) (idx+65) + "";
-            }
-            else if(Character.isLowerCase(c.charAt(i))) {
-                int idx=((c.charAt(i)-'a')-num)%26;
-                if(idx<0)
-                    p += (char) (idx + 26 + 97) + "";
-                else
-                    p += (char) (idx  + 97) + "";
-            }
-            else
-                p+=c.charAt(i)+"";
+        key = key.toLowerCase();
+        int[][] matrix = new int[2][2];
+
+        matrix[0][0] = key.charAt(0) - 'a';
+        matrix[0][1] = (key.charAt(1) - 'a') * -1;
+        matrix[1][0] = (key.charAt(2) - 'a') * -1;
+        matrix[1][1] = (key.charAt(3) - 'a');
+        int tmp = matrix[0][0];
+        matrix[0][0] = matrix[1][1];
+        matrix[1][1] = tmp;
+        int determint = (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
+        determint = make_num_pos(determint);
+        if (determint == 0) {
+            return "ERROR . . . . . .!";
+        }
+        int inverse = Inverse_of_num(determint);
+        if (inverse == -1) {
+            return "ERROR . . . . . .!";
         }
 
-        return p.toLowerCase();
+        for (int i = 0; i < 2; i++) {
+            matrix[i][0] = make_num_pos(matrix[i][0] * inverse) % 26;
+            matrix[i][1] = make_num_pos(matrix[i][1] * inverse) % 26;
+        }
+        String ans = "";
+        int[][] mat2 = new int[2][1];
+        for (int i = 0; i < c.length(); i += 2) {
+            mat2[0][0] = c.charAt(i) - 'a';
+            mat2[1][0] = c.charAt(i + 1) - 'a';
+            ans += multi(matrix, mat2, 2, 2, 2, 1);
+        }
+        if (ans.charAt(ans.length() - 1) == 'x') {
+            ans = ans.substring(0, ans.length() - 1);
+        }
+        return ans;
     }
+    private static int Inverse_of_num(int val) {
+
+        for (int i = 1; i < 26; i++) {
+            if (((val * i) % 26) == 1)
+                return i;
+        }
+        return -1;
+    }
+
+    private static int make_num_pos(int val) {
+        while (val < 0) {
+            val += 26;
+        }
+        return val;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
