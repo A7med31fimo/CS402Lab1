@@ -1,8 +1,8 @@
+import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
-
-public class ahmed {
+public class ahmed extends DataOfSboxs{
     public static String encrypt_by_mono(String p, String key) {
         key = key.toLowerCase();
         String ans = "";
@@ -425,7 +425,7 @@ public class ahmed {
         arr.put(2, true);
         arr.put(9, true);
         arr.put(16, true);
-        String [] keys=new String[16];
+        String[] keys = new String[16];
         for (int i = 1; i <= 16; i++) {
             if (arr.containsKey(i)) {
                 C = C.substring(1) + C.charAt(0);
@@ -434,7 +434,7 @@ public class ahmed {
                 C = C.substring(2) + C.charAt(0) + C.charAt(1);
                 D = D.substring(2) + D.charAt(0) + D.charAt(1);
             }
-            keys[i-1] = C + D;
+            keys[i - 1] = C + D;
         }
 
         int[] pc2 = {14, 17, 11, 24, 1, 5,
@@ -445,7 +445,7 @@ public class ahmed {
                 30, 40, 51, 45, 33, 48,
                 44, 49, 39, 56, 34, 53,
                 46, 42, 50, 36, 29, 32};
-        C="";
+        C = "";
 
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 48; j++) {
@@ -456,19 +456,144 @@ public class ahmed {
         }
         return keys;
     }
+    public static String DES_Dec(String c,String Key) {
+        String tmp = "";
+        c = hexToBinary(c);
+        int[] ipMatrix = {
+                58, 50, 42, 34, 26, 18, 10, 2,
+                60, 52, 44, 36, 28, 20, 12, 4,
+                62, 54, 46, 38, 30, 22, 14, 6,
+                64, 56, 48, 40, 32, 24, 16, 8,
+                57, 49, 41, 33, 25, 17, 9, 1,
+                59, 51, 43, 35, 27, 19, 11, 3,
+                61, 53, 45, 37, 29, 21, 13, 5,
+                63, 55, 47, 39, 31, 23, 15, 7
+        };
+        for (int i = 0; i < ipMatrix.length; i++) {
+            tmp += c.charAt(ipMatrix[i] - 1);
+        }
+        c = tmp;
+        String L = c.substring(0, 32), R = c.substring(32, 64);
+        String[] keys = DES_Genertor_Key(Key);
+        for (int i = 15; i >= 0; i--) {
+            tmp = R;
+            R = xorStrings(L, F(R, keys[i]));
+            L = tmp;
+        }
+        tmp=R+L;
+        int []IP_INV = { 40,  8, 48, 16, 56, 24, 64, 32,
+                39,  7, 47, 15, 55, 23, 63, 31,
+                38,  6, 46, 14, 54, 22, 62, 30,
+                37,  5, 45, 13, 53, 21, 61, 29,
+                36,  4, 44, 12, 52, 20, 60, 28,
+                35,  3, 43, 11, 51, 19, 59, 27,
+                34,  2, 42, 10, 50, 18, 58, 26,
+                33,  1, 41,  9, 49, 17, 57, 25 };
+        String ans="";
+        for (int i = 0; i < IP_INV.length; i++) {
+            ans += tmp.charAt(IP_INV[i] - 1);
+        }
+        tmp="";
+        for (int i = 0; i < 8; i++) {
+            BigInteger decimalValue = new BigInteger(ans.substring(0,8), 2);
+            String hexString = decimalValue.toString(16);
+            tmp+=hexString.length()==1?'0'+hexString:hexString;
+            ans=ans.substring(8);
+        }
+        return tmp;
 
-    public static void main(String[] args) {
-        String s[]=DES_Genertor_Key("133457799BBCDFF1");
-        for (int i = 0; i < 16; i++) {
-            System.out.println("Key "+(i+1)+" ="+s[i]);
-        }
-        if("100101111100010111010001111110101011101001000001".equals(s[12])){
-            System.out.println(true);
-        }
-        if("110010110011110110001011000011100001011111110101".equals(s[15])){
-            System.out.println(true);
-        }
     }
+    public static String DES_Enc(String c,String Key) {
+        String tmp = "";
+        c = hexToBinary(c);
+        int[] ipMatrix = {
+                58, 50, 42, 34, 26, 18, 10, 2,
+                60, 52, 44, 36, 28, 20, 12, 4,
+                62, 54, 46, 38, 30, 22, 14, 6,
+                64, 56, 48, 40, 32, 24, 16, 8,
+                57, 49, 41, 33, 25, 17, 9, 1,
+                59, 51, 43, 35, 27, 19, 11, 3,
+                61, 53, 45, 37, 29, 21, 13, 5,
+                63, 55, 47, 39, 31, 23, 15, 7
+        };
+        for (int i = 0; i < ipMatrix.length; i++) {
+            tmp += c.charAt(ipMatrix[i] - 1);
+        }
+        c = tmp;
+        String L = c.substring(0, 32), R = c.substring(32, 64);
+        String[] keys = DES_Genertor_Key(Key);
+        for (int i = 0; i < 16; i++) {
+            tmp = R;
+            R = xorStrings(L, F(R, keys[i]));
+            L = tmp;
+        }
+        tmp=R+L;
+        int []IP_INV = { 40,  8, 48, 16, 56, 24, 64, 32,
+                39,  7, 47, 15, 55, 23, 63, 31,
+                38,  6, 46, 14, 54, 22, 62, 30,
+                37,  5, 45, 13, 53, 21, 61, 29,
+                36,  4, 44, 12, 52, 20, 60, 28,
+                35,  3, 43, 11, 51, 19, 59, 27,
+                34,  2, 42, 10, 50, 18, 58, 26,
+                33,  1, 41,  9, 49, 17, 57, 25 };
+        String ans="";
+        for (int i = 0; i < IP_INV.length; i++) {
+            ans += tmp.charAt(IP_INV[i] - 1);
+        }
+        tmp="";
+        for (int i = 0; i < 8; i++) {
+            BigInteger decimalValue = new BigInteger(ans.substring(0,8), 2);
+            String hexString = decimalValue.toString(16);
+            tmp+=hexString.length()==1?'0'+hexString:hexString;
+            ans=ans.substring(8);
+        }
+        return tmp;
+    }
+
+    public static String F(String R, String K) {
+        int[] eBitTable = {
+                32, 1,  2,  3,  4,  5,  4,  5,
+                6,  7,  8,  9,  8,  9,  10, 11,
+                12, 13, 12, 13, 14, 15, 16, 17,
+                16, 17, 18, 19, 20, 21, 20, 21,
+                22, 23, 24, 25, 24, 25, 26, 27,
+                28, 29, 28, 29, 30, 31, 32, 1
+        };
+        String tmp="";
+        for (int i = 0; i < eBitTable.length; i++) {
+            tmp += R.charAt(eBitTable[i] - 1);
+        }
+        R=tmp;
+        tmp=xorStrings(R,K);
+        tmp=DataOfSboxs.S_Box(tmp);
+        int[] p = {16, 7, 20, 21,
+                29, 12, 28, 17,
+                1, 15, 23, 26,
+                5, 18, 31, 10,
+                2, 8, 24, 14,
+                32, 27, 3, 9,
+                19, 13, 30, 6,
+                22, 11, 4, 25};
+        String ans="";
+        for (int i = 0; i < p.length; i++) {
+            ans += tmp.charAt(p[i] - 1);
+        }
+        return ans;
+    }
+
+    public static String xorStrings(String s1, String s2) {
+            String result = "";
+            int len = s1.length();
+            for (int i = 0; i < len; i++) {
+                if (s1.charAt(i) == s2.charAt(i)) {
+                    result += "0";
+                } else {
+                    result += "1";
+                }
+            }
+            return result;
+    }
+
 }
 
 

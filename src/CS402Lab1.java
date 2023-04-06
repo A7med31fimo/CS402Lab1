@@ -68,70 +68,14 @@ public class CS402Lab1 extends javax.swing.JFrame {
         }
         return ans;
     }
-    //mono
-    //playfaire
-    //hila
+
     public static String encrypt(String p, String key) {
-        key = key.toLowerCase();
-        int[][] matrix = new int[2][2];
-        int x = 0;
-        for (int i = 0; i < 2; i++) {
-            matrix[i][0] = key.charAt(x) - 'a';
-            x++;
-            matrix[i][1] = key.charAt(x) - 'a';
-            x++;
-        }
-        String ans = "";
-        int[][] mat2 = new int[2][1];
-        for (int i = 0; i < p.length(); i += 2) {
-            mat2[0][0] = p.charAt(i) - 'a';
-            mat2[1][0] = p.charAt(i + 1) - 'a';
-            ans += multi(matrix, mat2, 2, 2, 2, 1);
-        }
-        if (p.length() % 2 != 0) {
-            mat2[0][0] = p.charAt(p.length() - 1) - 'a';
-            mat2[1][0] = 'x' - 'a';
-            ans += multi(matrix, mat2, 2, 2, 2, 1);
-        }
-        return ans;
+     return ahmed.DES_Enc(p,key);
+     //key=133457799BBCDFF1//p=0123456789abcdef
     }
 
     public static String decrypt(String c, String key) {
-        key = key.toLowerCase();
-        int[][] matrix = new int[2][2];
-
-        matrix[0][0] = key.charAt(0) - 'a';
-        matrix[0][1] = (key.charAt(1) - 'a') * -1;
-        matrix[1][0] = (key.charAt(2) - 'a') * -1;
-        matrix[1][1] = (key.charAt(3) - 'a');
-        int tmp = matrix[0][0];
-        matrix[0][0] = matrix[1][1];
-        matrix[1][1] = tmp;
-        int determint = (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
-        determint = make_num_pos(determint);
-        if (determint == 0) {
-            return "ERROR . . . . . .!";
-        }
-        int inverse = Inverse_of_num(determint);
-        if (inverse == -1) {
-            return "ERROR . . . . . .!";
-        }
-
-        for (int i = 0; i < 2; i++) {
-            matrix[i][0] = make_num_pos(matrix[i][0] * inverse) % 26;
-            matrix[i][1] = make_num_pos(matrix[i][1] * inverse) % 26;
-        }
-        String ans = "";
-        int[][] mat2 = new int[2][1];
-        for (int i = 0; i < c.length(); i += 2) {
-            mat2[0][0] = c.charAt(i) - 'a';
-            mat2[1][0] = c.charAt(i + 1) - 'a';
-            ans += multi(matrix, mat2, 2, 2, 2, 1);
-        }
-        if (ans.charAt(ans.length() - 1) == 'x') {
-            ans = ans.substring(0, ans.length() - 1);
-        }
-        return ans;
+        return ahmed.DES_Dec(c,key);
     }
     private static int Inverse_of_num(int val) {
 
