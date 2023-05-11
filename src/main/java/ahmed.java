@@ -1,14 +1,9 @@
+import jakarta.xml.bind.DatatypeConverter;
+
 import java.math.BigInteger;
 import java.util.*;
 
 public class ahmed extends DataOfSboxs {
-    public static void main(String[] args) {
-        String key=generateKey(11);
-        String c=enc_RailFence("attack at once", "3");
-        System.out.println(c);
-        System.out.println(dec_RailFence(c, "3"));
-
-    }
     //*********************ENCRYPTION******************************
 
     public static String enc_Monoalphabetic(String p, String key) {
@@ -211,9 +206,7 @@ public class ahmed extends DataOfSboxs {
         }
         return res.toString().toUpperCase();
     }
-    public static String enc_RobinMillerTest(String p, String key) {
-        return p;
-    }
+
     public static String enc_Vernam(String p, String key) {
         String res = "";
         p = p.toLowerCase();
@@ -226,9 +219,6 @@ public class ahmed extends DataOfSboxs {
             }
         }
         return res.toUpperCase();
-    }
-    public static String enc_RSA(String p, String key) {
-        return p;
     }
     public static String enc_Playfair(String p, String key) {
         Map<Character, Boolean> m = new HashMap<Character, Boolean>();
@@ -700,12 +690,6 @@ public class ahmed extends DataOfSboxs {
         }
         return res.toString().toUpperCase();
     }
-    public static String dec_RobinMillerTest(String c, String key) {
-        return c;
-    }
-    public static String dec_RSA(String c, String key) {
-        return c;
-    }
     public static String dec_end_Vernam(String c, String key) {
         String res = "";
         c = c.toLowerCase();
@@ -901,6 +885,9 @@ public class ahmed extends DataOfSboxs {
         }
         return key.toString();
     }
+
+
+
 
 }
 

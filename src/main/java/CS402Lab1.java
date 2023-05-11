@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class CS402Lab1 extends javax.swing.JFrame {
      * Creates new form CS402Lab1
      */
     String mode = "enc";
+    static RSA rsa = new RSA(1024);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -73,10 +75,8 @@ public class CS402Lab1 extends javax.swing.JFrame {
             return ahmed.enc_RowTransposition(p, key);
         }else if (Type.equals("DES")){
             return ahmed.enc_DES(p, key);
-        }else if (Type.equals("Robin Miller Test")){
-            return ahmed.enc_RobinMillerTest(p, key);
         }else if(Type.equals("RSA")){
-            return ahmed.enc_RSA(p, key);
+            return rsa.encrypt(p);
         }else if(Type.equals("Vernam")){
             return ahmed.enc_Vernam(p, key);
         }
@@ -106,10 +106,8 @@ public class CS402Lab1 extends javax.swing.JFrame {
             return ahmed.dec_RowTransposition(c, key);
         }else if (Type.equals("DES")){
             return ahmed.dec_DES(c, key);
-        }else if (Type.equals("Robin Miller Test")){
-            return ahmed.dec_RobinMillerTest(c, key);
         }else if(Type.equals("RSA")){
-            return ahmed.dec_RSA(c, key);
+            return rsa.decrypt(c);
         }else if(Type.equals("Vernam")){
             return ahmed.dec_end_Vernam(c, key);
         }
@@ -187,7 +185,7 @@ public class CS402Lab1 extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        String[] Ciphers = {"Caesar", "Monoalphabetic", "Playfair", "Vigenere ", "Vernam", "Autokey", "One time pad ", "Rail Fence", "Hill", "Row Transposition", "DES", "Robin Miller Test", "RSA"};
+        String[] Ciphers = {"Caesar", "Monoalphabetic", "Playfair", "Vigenere ", "Vernam", "Autokey", "One time pad", "Rail Fence", "Hill", "Row Transposition", "DES", "Robin Miller Test", "RSA"};
         JComboBox comboBox = new JComboBox(Ciphers);
         comboBox.setBounds(430, 200, 140, 50);
         this.add(comboBox);
